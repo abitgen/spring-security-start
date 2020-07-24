@@ -1,16 +1,30 @@
 package io.github.abitgen.springsecuritystart.config
 
+import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter
+import org.springframework.security.core.userdetails.User
+import org.springframework.security.core.userdetails.UserDetailsService
+import org.springframework.security.crypto.password.PasswordEncoder
+import org.springframework.security.provisioning.InMemoryUserDetailsManager
 
 @Configuration
 @EnableWebSecurity
-class ApplicationSecurityConfig : WebSecurityConfigurerAdapter() {
+class ApplicationSecurityConfig constructor(passwordEncoder: PasswordEncoder) : WebSecurityConfigurerAdapter() {
 
+    private val userDetailsService: UserDetailsService by lazy{
+
+        InMemoryUserDetailsManager(User.builder().username("abitgen")
+                .password(passwordEncoder.encode("pass"))
+                .roles("STUDENT")
+                .build())
+
+    }
 
     override fun configure(http: HttpSecurity?) {
+
         http
                 ?.authorizeRequests()
                 /* Authenticate all requests */
@@ -34,4 +48,9 @@ class ApplicationSecurityConfig : WebSecurityConfigurerAdapter() {
                 /* Adds Basic Authentication*/
 
     }
+
+    @Bean
+    override fun userDetailsService(): UserDetailsService = userDetailsService
+
+
 }
