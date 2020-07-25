@@ -8,7 +8,6 @@ plugins {
     id("io.spring.dependency-management")
 }
 
-group = "guru.springframework"
 version = "1.0-SNAPSHOT"
 
 configure<JavaPluginConvention> {

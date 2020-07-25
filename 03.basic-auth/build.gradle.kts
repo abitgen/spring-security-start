@@ -7,8 +7,6 @@ plugins {
     id("io.spring.dependency-management")
 }
 
-group = "guru.springframework"
-version = "1.0-SNAPSHOT"
 
 configure<JavaPluginConvention> {
     sourceCompatibility = JavaVersion.VERSION_11
@@ -21,6 +19,7 @@ repositories {
 
 dependencies {
     implementation(project(":02.default-security"))
+    implementation(project(":lib-roles-permissions"))
 }
 
 tasks {

@@ -5,3 +5,7 @@ include("02.default-security" )
 include("03.basic-auth")
 
 
+// Common dependencies
+include("lib-roles-permissions")
+
+

@@ -1,5 +1,6 @@
 package io.github.abitgen.springsecuritystart.config
 
+import io.github.abitgen.springsecuritystart.security.UserRole
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
@@ -16,10 +17,17 @@ class ApplicationSecurityConfig constructor(passwordEncoder: PasswordEncoder) : 
 
     private val userDetailsService: UserDetailsService by lazy{
 
-        InMemoryUserDetailsManager(User.builder().username("abitgen")
+        val adminUser = User.builder().username("admin")
+                .password(passwordEncoder.encode("pass123"))
+                .roles(UserRole.ADMIN.name)
+                .build()
+
+        val studentA = User.builder().username("studA")
                 .password(passwordEncoder.encode("pass"))
-                .roles("STUDENT")
-                .build())
+                .roles(UserRole.STUDENT.name)
+                .build()
+
+        InMemoryUserDetailsManager(adminUser, studentA)
 
     }
 
@@ -32,8 +40,14 @@ class ApplicationSecurityConfig constructor(passwordEncoder: PasswordEncoder) : 
                 ?.antMatchers("/","index","/css/*","/js/*")
                 /* Match resources in the mentioned matching paths */
 
-                ?.permitAll()
-                /* Access is granted for any user, Authentication is not need*/
+                    ?.permitAll()
+                    /* Access is granted for any user, Authentication is not need*/
+
+                ?.antMatchers("/api/**")
+                /* Match resources in the mentioned matching paths */
+
+                    ?.hasRole(UserRole.STUDENT.name)
+                    /* Only by Student Role */
 
                 ?.anyRequest()
                 /* Every other requests*/
