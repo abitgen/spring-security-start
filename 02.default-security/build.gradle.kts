@@ -20,9 +20,9 @@ repositories {
 
 dependencies {
     implementation(project(":01.no-security"))
-    api("org.springframework.boot:spring-boot-starter-data-jpa:2.3.1.RELEASE")
-    api("org.springframework.boot:spring-boot-starter-security:2.3.1.RELEASE")
-    implementation("org.springframework.boot:spring-boot-starter-thymeleaf:2.3.1.RELEASE")
+    api("org.springframework.boot:spring-boot-starter-data-jpa")
+    api("org.springframework.boot:spring-boot-starter-security")
+    implementation("org.springframework.boot:spring-boot-starter-thymeleaf")
     implementation("org.webjars:bootstrap:4.5.0")
     implementation("org.webjars:jquery:3.5.1")
     implementation("com.h2database:h2:1.4.200")

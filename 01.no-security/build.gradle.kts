@@ -20,7 +20,7 @@ repositories {
 }
 
 dependencies {
-    api("org.springframework.boot:spring-boot-starter-web:2.3.1.RELEASE")
+    api("org.springframework.boot:spring-boot-starter-web")
     //implementation("org.springframework.boot:spring-boot-starter-data-jpa:2.3.1.RELEASE")
     //implementation("org.springframework.boot:spring-boot-starter-security:2.3.1.RELEASE")
     //implementation("org.springframework.boot:spring-boot-starter-thymeleaf:2.3.1.RELEASE")

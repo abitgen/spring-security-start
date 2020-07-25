@@ -6,5 +6,8 @@ enum class UserRole(val permissions: Set<UserPermission>) {
 
     STUDENT(hashSetOf<UserPermission>(COURSE_READ)),
 
-    ADMIN(hashSetOf<UserPermission>(COURSE_READ, COURSE_WRITE, STUDENT_READ, STUDENT_WRITE))
+    ADMIN(hashSetOf<UserPermission>(COURSE_READ, COURSE_WRITE, STUDENT_READ, STUDENT_WRITE)),
+
+    ADMINTRAINEE(hashSetOf<UserPermission>(COURSE_READ, STUDENT_READ))
+
 }
