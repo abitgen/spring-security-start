@@ -1,9 +1,12 @@
 package io.github.abitgen.springsecuritystart.config
 
-import io.github.abitgen.springsecuritystart.security.UserRole
+import io.github.abitgen.springsecuritystart.security.UserPermission.COURSE_WRITE
+import io.github.abitgen.springsecuritystart.security.UserPermission.STUDENT_WRITE
+import io.github.abitgen.springsecuritystart.security.UserRole.*
 import io.github.abitgen.springsecuritystart.security.extensions.grantedAuthorities
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import org.springframework.http.HttpMethod
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter
@@ -22,19 +25,19 @@ class ApplicationSecurityConfig constructor(passwordEncoder: PasswordEncoder) : 
         val adminUser = User.builder().username("admin")
                 .password(passwordEncoder.encode("pass123"))
 //                .roles(UserRole.ADMIN.name)  moved to authorities
-                .authorities(UserRole.ADMIN.grantedAuthorities())
+                .authorities(ADMIN.grantedAuthorities())
                 .build()
 
         val adminTraineeUser = User.builder().username("admint")
                 .password(passwordEncoder.encode("pass123"))
 //                .roles(UserRole.ADMINTRAINEE.name) moved to authorities
-                .authorities(UserRole.ADMINTRAINEE.grantedAuthorities())
+                .authorities(ADMINTRAINEE.grantedAuthorities())
                 .build()
 
         val studentA = User.builder().username("studA")
                 .password(passwordEncoder.encode("pass"))
 //                .roles(UserRole.STUDENT.name) moved to authorities
-                .authorities(UserRole.STUDENT.grantedAuthorities())
+                .authorities(STUDENT.grantedAuthorities())
                 .build()
 
         InMemoryUserDetailsManager(adminUser, adminTraineeUser, studentA)
@@ -43,8 +46,11 @@ class ApplicationSecurityConfig constructor(passwordEncoder: PasswordEncoder) : 
 
     override fun configure(http: HttpSecurity?) {
 
+        val managementApi = arrayOf("/api/management/**")
+
         http
-                ?.csrf()?.disable()  // POST, PUT mappings were not working TODO should be handled differently
+                ?.csrf()?.disable()  // When to use CSRF https://docs.spring.io/spring-security/site/docs/3.2.0.CI-SNAPSHOT/reference/html/csrf.html
+                /*Apis dont require CSRF, as its related to browser cookies*/
 
                 ?.authorizeRequests()
                 /* Authenticate all requests */
@@ -55,16 +61,23 @@ class ApplicationSecurityConfig constructor(passwordEncoder: PasswordEncoder) : 
                     ?.permitAll()
                     /* Access is granted for any user, Authentication is not need*/
 
-                ?.antMatchers("/api/management/**")
+
+                ?.antMatchers( HttpMethod.POST, *managementApi)?.hasAuthority(STUDENT_WRITE.name)
+                ?.antMatchers( HttpMethod.DELETE, *managementApi)?.hasAuthority(STUDENT_WRITE.name)
+                ?.antMatchers( HttpMethod.PUT, *managementApi)?.hasAuthority(STUDENT_WRITE.name)
+
+                ?.antMatchers( HttpMethod.POST, *managementApi)?.hasAuthority(COURSE_WRITE.name)
+                ?.antMatchers( HttpMethod.PUT, *managementApi)?.hasAuthority(COURSE_WRITE.name)
+                ?.antMatchers( HttpMethod.DELETE, *managementApi)?.hasAuthority(COURSE_WRITE.name)
+                ?.antMatchers( HttpMethod.GET, *managementApi)?.hasAnyRole(ADMIN.name, ADMINTRAINEE.name)
                 /* Ordering of path matters, give access to specific paths first and then generalize*/
 
-                    ?.hasRole(UserRole.ADMIN.name)
-                    /* Only admin has access to management apis*/
+
 
                 ?.antMatchers("/api/**")
                 /* Match resources in the mentioned matching paths */
 
-                    ?.hasRole(UserRole.STUDENT.name)
+                    ?.hasRole(STUDENT.name)
                     /* Only by Student Role */
 
                 ?.anyRequest()
