@@ -32,6 +32,7 @@ subprojects{
 	dependencies {
 		apply(plugin = "org.jetbrains.kotlin.jvm")
 		implementation(kotlin("stdlib-jdk8"))
+		implementation(kotlin("reflect"))
 		testImplementation("org.junit.jupiter:junit-jupiter:5.6.2")
 		testImplementation( "org.springframework.boot:spring-boot-starter-test:2.3.1.RELEASE")
 	}
